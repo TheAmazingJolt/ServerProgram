@@ -1,11 +1,9 @@
 package tiles.structures;
 
-import gfx.Assets;
-
 public class WoodStructure extends Structure{
 
 	public WoodStructure(int id) {
-		super(Assets.woodenStructure, id, -1, -1);
+		super(id, -1, -1);
 	}
 
 	public boolean isSolid() {

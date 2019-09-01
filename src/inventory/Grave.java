@@ -1,6 +1,5 @@
 package inventory;
 
-import java.awt.Graphics;
 import java.util.ArrayList;
 
 import entities.creatures.Player;

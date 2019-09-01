@@ -1,9 +1,6 @@
 package entities.creatures;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 
 import items.Item;
 import utils.Timer;

@@ -1,14 +1,10 @@
 package entities.creatures;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import entities.Entity;
 import inventory.Grave;
-import inventory.Help;
 import inventory.Hotbar;
 import inventory.Inventory;
 import inventory.LargeInventory;
@@ -44,7 +40,6 @@ public class Player extends Creature
     
     private Inventory inventory;
     private Grave grave;
-    private Help help;
     private Hotbar hotbar;
     private LargeInventory weapons;
     
@@ -68,10 +63,9 @@ public class Player extends Creature
         bounds.y = 30;
         bounds.width = 20;
         bounds.height = 34;
-        inventory = new Inventory();
-        hotbar = new Hotbar();
-        help = new Help();
-        weapons = new LargeInventory();
+        inventory = new Inventory(world);
+        hotbar = new Hotbar(world);
+        weapons = new LargeInventory(world);
         upgrades = new ArrayList<Upgrade>();
         maxHealth = 10;
         ar = new Rectangle();
@@ -79,6 +73,7 @@ public class Player extends Creature
 
     public void tick()
     {
+    	System.out.println("Player Tick");
         if(health <= 0)
             die();
         if(playerId == 1) {
@@ -88,18 +83,22 @@ public class Player extends Creature
         		else if(grave.isCollected())
         			grave = null;
         	}
+        	getInput();
             move();
             checkAttacks();
-            if(handler.getMouseManager().isLeftPressed() && !inventory.isActive()) {
-                checkRangedAttacks();
-                buildStructure();
-        		if(handler.getGame().isDebug()) {
-        			checkClicked();
-       			}
+            if(world.id == 1) {
+            	if(world.storage.getCurrentMousePress1().contains("left") && !inventory.isActive()) {
+                    checkRangedAttacks();
+                    buildStructure();
+                }
+            }else if(world.id == 2) {
+            	if(world.storage.getCurrentMousePress2().contains("left") && !inventory.isActive()) {
+                    checkRangedAttacks();
+                    buildStructure();
+                }
             }
             inventory.tick();
             hotbar.tick();
-            help.tick();
             weapons.tick();
             for(Upgrade u : upgrades) {
             	if(u.getEffectType().isInventoryExpansion()) {
@@ -122,35 +121,50 @@ public class Player extends Creature
             }
         }
     }
-
-    private void checkClicked() {
-    	float mouseX = handler.getMouseManager().getMouseX() + handler.getGameCamera().getxOffset();
-    	float mouseY = handler.getMouseManager().getMouseY() + handler.getGameCamera().getyOffset();
-    	int tX = (int) Math.floor(mouseX/64);
-    	int tY = (int) Math.floor(mouseY/64);
-	    System.out.println(tX + " " + tY);
-    }
     
     private void buildStructure() {
-    	float mouseX = handler.getMouseManager().getMouseX() + handler.getGameCamera().getxOffset();
-    	float mouseY = handler.getMouseManager().getMouseY() + handler.getGameCamera().getyOffset();
-    	int tileX = (int) Math.floor(mouseX/64);
-    	int tileY = (int) Math.floor(mouseY/64);
-    	for(Item i : hotbar.getInventoryItems()) {
-    		if(i.isTile()) {
-    			if(i.getTileType().getId() == 9) {
-    				Structure s = new WoodStructure(9);
-    				Tile.getStructures().add(s);
-    				s.setLocation(tileX, tileY);
-    				inventory.removeItem(i, 1);
-           		 	try {
-						Thread.sleep(150);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-    				return;
-    			}
-    		}
+    	if(world.id == 1) {
+    		float mouseX = world.storage.getMouseX1() + world.storage.getCameraXOffset1();
+        	float mouseY = world.storage.getMouseY1() + world.storage.getCameraYOffset1();
+        	int tileX = (int) Math.floor(mouseX/64);
+        	int tileY = (int) Math.floor(mouseY/64);
+        	for(Item i : hotbar.getInventoryItems()) {
+        		if(i.isTile()) {
+        			if(i.getTileType().getId() == 9) {
+        				Structure s = new WoodStructure(9);
+        				Tile.getStructures().add(s);
+        				s.setLocation(tileX, tileY);
+        				inventory.removeItem(i, 1);
+               		 	try {
+    						Thread.sleep(150);
+    					} catch (InterruptedException e) {
+    						e.printStackTrace();
+    					}
+        				return;
+        			}
+        		}
+        	}
+    	}else if(world.id == 2) {
+    		float mouseX = world.storage.getMouseX2() + world.storage.getCameraXOffset2();
+        	float mouseY = world.storage.getMouseY2() + world.storage.getCameraYOffset2();
+        	int tileX = (int) Math.floor(mouseX/64);
+        	int tileY = (int) Math.floor(mouseY/64);
+        	for(Item i : hotbar.getInventoryItems()) {
+        		if(i.isTile()) {
+        			if(i.getTileType().getId() == 9) {
+        				Structure s = new WoodStructure(9);
+        				Tile.getStructures().add(s);
+        				s.setLocation(tileX, tileY);
+        				inventory.removeItem(i, 1);
+               		 	try {
+    						Thread.sleep(150);
+    					} catch (InterruptedException e) {
+    						e.printStackTrace();
+    					}
+        				return;
+        			}
+        		}
+        	}
     	}
     }
     
@@ -168,21 +182,71 @@ public class Player extends Creature
         	}
             if(inventory.isActive())
                 return;
-            float mouseX = handler.getMouseManager().getMouseX() + handler.getGameCamera().getxOffset();
-           	float mouseY = handler.getMouseManager().getMouseY() + handler.getGameCamera().getyOffset();
-           	if(mouseX >= this.x + this.width && mouseY >= this.y && mouseY <= this.y + this.height) {
-           		directionMoving = "right";
-           	}else if(mouseX <= this.x && mouseY >= this.y && mouseY <= this.y + this.height) {
-           		directionMoving = "left";
-           	}else if(mouseY >= this.y + this.height && mouseX >= this.x && mouseX <= this.x + this.width) {
-           		directionMoving = "down";
-           	}else if(mouseY <= this.y && mouseX >= this.x && mouseX <= this.x + this.width) {
-           		directionMoving = "up";
-           	}else {
-           		directionMoving = "";
-           	}
-            if(hotbar.getInventoryItems().size() > 0) {
-            	hotbar.useRanged(hotbar.getInventoryItems().get(hotbar.getSelectedItem()));
+            if(world.id == 1) {
+            	float mouseX = world.storage.getMouseX1() + world.storage.getCameraXOffset1();
+               	float mouseY = world.storage.getMouseY1() + world.storage.getCameraYOffset1();
+               	if(mouseX >= this.x + this.width && mouseY >= this.y && mouseY <= this.y + this.height) {
+               		directionMoving = "right";
+               	}else if(mouseX <= this.x && mouseY >= this.y && mouseY <= this.y + this.height) {
+               		directionMoving = "left";
+               	}else if(mouseY >= this.y + this.height && mouseX >= this.x && mouseX <= this.x + this.width) {
+               		directionMoving = "down";
+               	}else if(mouseY <= this.y && mouseX >= this.x && mouseX <= this.x + this.width) {
+               		directionMoving = "up";
+               	}else {
+               		directionMoving = "";
+               	}
+                if(hotbar.getInventoryItems().size() > 0) {
+                	hotbar.useRanged(hotbar.getInventoryItems().get(hotbar.getSelectedItem()));
+                }
+            }else if(world.id == 2) {
+            	float mouseX = world.storage.getMouseX2() + world.storage.getCameraXOffset2();
+               	float mouseY = world.storage.getMouseY2() + world.storage.getCameraYOffset2();
+               	if(mouseX >= this.x + this.width && mouseY >= this.y && mouseY <= this.y + this.height) {
+               		directionMoving = "right";
+               	}else if(mouseX <= this.x && mouseY >= this.y && mouseY <= this.y + this.height) {
+               		directionMoving = "left";
+               	}else if(mouseY >= this.y + this.height && mouseX >= this.x && mouseX <= this.x + this.width) {
+               		directionMoving = "down";
+               	}else if(mouseY <= this.y && mouseX >= this.x && mouseX <= this.x + this.width) {
+               		directionMoving = "up";
+               	}else {
+               		directionMoving = "";
+               	}
+                if(hotbar.getInventoryItems().size() > 0) {
+                	hotbar.useRanged(hotbar.getInventoryItems().get(hotbar.getSelectedItem()));
+                }
+            }
+    	}
+    }
+    
+    private void getInput()
+    {
+    	if(playerId == 1) {
+    		xMove = 0.0F;
+            yMove = 0.0F;
+            if(inventory.isActive())
+                return;
+            if(world.id == 1) {
+            	if(world.storage.getCurrentKey1().contains("W"))
+                    yMove = -speed;
+                if(world.storage.getCurrentKey1().contains("S") && !world.storage.getCurrentKey1().contains("shift") && !world.storage.getCurrentKey1().contains("escape")) {
+                	yMove = speed;
+                	}
+                if(world.storage.getCurrentKey1().contains("A") && !world.storage.getCurrentKey1().contains("escape"))
+                    xMove = -speed;
+                if(world.storage.getCurrentKey1().contains("D"))
+                    xMove = speed;
+            }else if(world.id == 2) {
+            	if(world.storage.getCurrentKey2().contains("W"))
+                    yMove = -speed;
+                if(world.storage.getCurrentKey2().contains("S") && !world.storage.getCurrentKey1().contains("shift") && !world.storage.getCurrentKey1().contains("escape")) {
+                	yMove = speed;
+                	}
+                if(world.storage.getCurrentKey2().contains("A") && !world.storage.getCurrentKey1().contains("escape"))
+                    xMove = -speed;
+                if(world.storage.getCurrentKey2().contains("D"))
+                    xMove = speed;
             }
     	}
     }
@@ -253,122 +317,240 @@ public class Player extends Creature
             	ar.y = cb.y + cb.height;
             }
             
-
-            if(handler.getMouseManager().isLeftPressed()) {
-                checkTiles();
-            	if(world.getCurrentWorld() == 1) {
-                	for(Entity e : world.getEntityManager().getEntities())
-                	{
-                		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
-                		{
-                			int healthBefore = health;
-                			e.hurt(this.attackStrength);
-                			if(health != healthBefore)
-                				health = healthBefore;
-                			else
-                				return;
-                		}
-                	}
-                	for(Entity e : world.getEntityManager().getE1overflow1())
-                	{
-                		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
-                		{
-                			int healthBefore = health;
-                			e.hurt(this.attackStrength);
-                			if(health != healthBefore)
-                				health = healthBefore;
-                			else
-                				return;
-                		}
-                	}
-                	for(Entity e : world.getEntityManager().getE1overflow2())
-                	{
-                		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
-                		{
-                			int healthBefore = health;
-                			e.hurt(this.attackStrength);
-                			if(health != healthBefore)
-                				health = healthBefore;
-                			else
-                				return;
-                		}
-                	}
-                }else if(world.getCurrentWorld() == 2) {
-                	for(Entity e : world.getEntityManager().getEntities2())
-                	{
-                		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
-                		{
-                			int healthBefore = health;
-                			e.hurt(this.attackStrength);
-                			if(health != healthBefore)
-                				health = healthBefore;
-                			else
-                				return;
-                		}
-                	}
-                	for(Entity e : world.getEntityManager().getE2overflow1())
-                	{
-                		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
-                		{
-                			int healthBefore = health;
-                			e.hurt(this.attackStrength);
-                			if(health != healthBefore)
-                				health = healthBefore;
-                			else
-                				return;
-                		}
-                	}
-                	for(Entity e : world.getEntityManager().getE2overflow2())
-                	{
-                		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
-                		{
-                			int healthBefore = health;
-                			e.hurt(this.attackStrength);
-                			if(health != healthBefore)
-                				health = healthBefore;
-                			else
-                				return;
-                		}
-                	}
-                }else if(world.getCurrentWorld() == 3) {
-                	for(Entity e : world.getEntityManager().getEntities3())
-                	{
-                		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
-                		{
-                			int healthBefore = health;
-                			e.hurt(this.attackStrength);
-                			if(health != healthBefore)
-                				health = healthBefore;
-                			else
-                				return;
-                		}
-                	}
-                	for(Entity e : world.getEntityManager().getE3overflow1())
-                	{
-                		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
-                		{
-                			int healthBefore = health;
-                			e.hurt(this.attackStrength);
-                			if(health != healthBefore)
-                				health = healthBefore;
-                			else
-                				return;
-                		}
-                	}
-                	for(Entity e : world.getEntityManager().getE3overflow2())
-                	{
-                		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
-                		{
-                			int healthBefore = health;
-                			e.hurt(this.attackStrength);
-                			if(health != healthBefore)
-                				health = healthBefore;
-                			else
-                				return;
-                		}
-                	}
+            if(world.id == 1) {
+            	if(world.storage.getCurrentMousePress1().contains("left")) {
+                    checkTiles();
+                	if(world.getCurrentWorld() == 1) {
+                    	for(Entity e : world.getEntityManager().getEntities())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    	for(Entity e : world.getEntityManager().getE1overflow1())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    	for(Entity e : world.getEntityManager().getE1overflow2())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    }else if(world.getCurrentWorld() == 2) {
+                    	for(Entity e : world.getEntityManager().getEntities2())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    	for(Entity e : world.getEntityManager().getE2overflow1())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    	for(Entity e : world.getEntityManager().getE2overflow2())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    }else if(world.getCurrentWorld() == 3) {
+                    	for(Entity e : world.getEntityManager().getEntities3())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    	for(Entity e : world.getEntityManager().getE3overflow1())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    	for(Entity e : world.getEntityManager().getE3overflow2())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    }
+                }
+            }else if(world.id == 2) {
+            	if(world.storage.getCurrentMousePress2().contains("left")) {
+                    checkTiles();
+                	if(world.getCurrentWorld() == 1) {
+                    	for(Entity e : world.getEntityManager().getEntities())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    	for(Entity e : world.getEntityManager().getE1overflow1())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    	for(Entity e : world.getEntityManager().getE1overflow2())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    }else if(world.getCurrentWorld() == 2) {
+                    	for(Entity e : world.getEntityManager().getEntities2())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    	for(Entity e : world.getEntityManager().getE2overflow1())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    	for(Entity e : world.getEntityManager().getE2overflow2())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    }else if(world.getCurrentWorld() == 3) {
+                    	for(Entity e : world.getEntityManager().getEntities3())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    	for(Entity e : world.getEntityManager().getE3overflow1())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    	for(Entity e : world.getEntityManager().getE3overflow2())
+                    	{
+                    		if(e != this && e.getCollisionBounds(0.0F, 0.0F).intersects(ar))
+                    		{
+                    			int healthBefore = health;
+                    			e.hurt(this.attackStrength);
+                    			if(health != healthBefore)
+                    				health = healthBefore;
+                    			else
+                    				return;
+                    		}
+                    	}
+                    }
                 }
             }
+            
     	}
     	if(playerId == 2) {
     		if(health <= 0)

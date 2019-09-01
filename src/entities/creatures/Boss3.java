@@ -2,10 +2,7 @@ package entities.creatures;
 
 import items.Item;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 
 import utils.Timer;
 import worlds.World;

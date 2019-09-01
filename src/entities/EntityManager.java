@@ -1,6 +1,5 @@
 package entities;
 
-import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -29,8 +28,6 @@ public class EntityManager {
 	
 	private World world;
 	
-	private boolean positionDetermined = false;
-	private int currentSorting = 0;
 	private Comparator<Entity> renderSorter = new Comparator<Entity>() {
 		public int compare(Entity a, Entity b) {
 			if(a.getY() + a.getHeight() < b.getY() + b.getHeight()) {
@@ -40,9 +37,7 @@ public class EntityManager {
 		}
 	};
 	
-	public EntityManager(Player player) {
-		this.player = player;
-		player2 = new Player(3164, 3164, 2, -2, world);
+	public EntityManager() {
 		entities1 = new ArrayList<Entity>();
 		e1overflow1 = new ArrayList<Entity>();
 		e1overflow2 = new ArrayList<Entity>();
@@ -54,6 +49,11 @@ public class EntityManager {
 		e3overflow2 = new ArrayList<Entity>();
 		toAdd = new ArrayList<Entity>();
 		toRemove = new ArrayList<Entity>();
+	}
+	
+	public void setPlayer(World world) {
+		player = new Player(100, 100, 1, -1, world);
+		player2 = new Player(3164, 3164, 2, -2, world);
 		addEntity1(player);
 		addEntity2(player);
 		addEntity3(player);
@@ -62,6 +62,7 @@ public class EntityManager {
 	
 	public void tick()
     {
+        System.out.println(world.getCurrentWorld());
 		player.setHealth(player.getMaxHealth());
 		player2.setHealth(player2.getMaxHealth());
 		if(world.getCurrentWorld() == 1) {

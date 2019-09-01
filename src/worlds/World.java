@@ -1,7 +1,5 @@
 package worlds;
 
-import java.awt.Graphics;
-
 import entities.EntityManager;
 import entities.creatures.Boss1;
 import entities.creatures.Boss2;
@@ -9,7 +7,6 @@ import entities.creatures.Boss3;
 import entities.creatures.HellZombie;
 import entities.creatures.IcyZombie;
 import entities.creatures.Penguin;
-import entities.creatures.Player;
 import entities.creatures.Zombie;
 import entities.statics.Coal;
 import entities.statics.Flint;
@@ -19,6 +16,7 @@ import entities.statics.Iron;
 import entities.statics.Stone;
 import entities.statics.Tree;
 import items.ItemManager;
+import main.Storage;
 import tiles.DoorTile;
 import tiles.DoorTile2;
 import tiles.Tile;
@@ -45,21 +43,33 @@ public class World
     private static int currentWorld;
     private static int totalEntities1;
     private static int totalEntities2;
+    private static boolean playerSet = false;
+    
+    public int id;
+    
+    public Storage storage;
 	
-    public World(String path)
+    public World(String path, Storage storage, int id)
     {
     	System.out.println("a");
-        entityManager = new EntityManager(new Player(100, 100, 1, -1));
+        entityManager = new EntityManager();
         itemManager = new ItemManager();
+        this.storage = storage;
         loadWorld(path);
-        spawnX = 3264;
-        spawnY = 3264;
-        entityManager.getPlayer().setPos(spawnX, spawnY);
+        this.id = id;
     }
 
     public void tick()
     {
-    	entityManager.setWorld(this);
+        if(!playerSet) {
+        	entityManager.setWorld(this);
+        	entityManager.setPlayer(this);
+            spawnX = 3264;
+            spawnY = 3264;
+            entityManager.getPlayer().setPos(spawnX, spawnY);
+        	playerSet = true;
+        }
+    	System.out.println("World Tick");
         entityManager.tick();
         itemManager.tick();
         if(entityManager.getPlayer().getKilledEnemies() >= 5)
@@ -165,53 +175,53 @@ public class World
                		System.out.println("aaa");
                		entityNum++;
                		if(entityName.contains("t")) {
-                       	entityManager.addEntity1(new Tree((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum));
+                       	entityManager.addEntity1(new Tree((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum, this));
                   	}else if(entityName.contains("s")) {
-                   		entityManager.addEntity1(new Stone((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum));
+                   		entityManager.addEntity1(new Stone((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum, this));
                    	}else if(entityName.contains("i")) {
-                   		entityManager.addEntity1(new Iron((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum));
+                   		entityManager.addEntity1(new Iron((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum, this));
                     }else if(entityName.contains("f")) {
-                   		entityManager.addEntity1(new Flint((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum));
+                   		entityManager.addEntity1(new Flint((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum, this));
                    	}else if(entityName.contains("z")) {
-                   		entityManager.addEntity1(new Zombie((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum, getEntityManager().getPlayer()));
+                   		entityManager.addEntity1(new Zombie((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum, getEntityManager().getPlayer(), this));
                    	}else if(entityName.contains("b")) {
-                  		entityManager.addEntity1(new Boss1((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, 20, entityNum));
+                  		entityManager.addEntity1(new Boss1((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, 20, entityNum, this));
                    	}
                	}else if(currentWorld == 2) {
                		entityNum2++;
                		if(entityName.contains("t")) {
-                       	entityManager.addEntity2(new HellTree((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum2));
+                       	entityManager.addEntity2(new HellTree((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum2, this));
                    	}else if(entityName.contains("s")) {
-                  		entityManager.addEntity2(new Stone((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum2));
+                  		entityManager.addEntity2(new Stone((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum2, this));
                    	}else if(entityName.contains("i")) {
-                  		entityManager.addEntity2(new Iron((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum2));
+                  		entityManager.addEntity2(new Iron((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum2, this));
                    	}else if(entityName.contains("f")) {
-                  		entityManager.addEntity2(new Flint((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum2));
+                  		entityManager.addEntity2(new Flint((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum2, this));
                   	}else if(entityName.contains("z")) {
-                  		entityManager.addEntity2(new HellZombie((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum2, getEntityManager().getPlayer()));
+                  		entityManager.addEntity2(new HellZombie((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum2, getEntityManager().getPlayer(), this));
                   	}else if(entityName.contains("c")) {
-                 		entityManager.addEntity2(new Coal((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum2));
+                 		entityManager.addEntity2(new Coal((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum2, this));
                    	}else if(entityName.contains("b")) {
-                   		entityManager.addEntity2(new Boss2((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, 50, entityNum2));
+                   		entityManager.addEntity2(new Boss2((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, 50, entityNum2, this));
                    	}
               	}else if(currentWorld == 3) {
                		entityNum3++;
                     if(entityName.contains("t")) {
-                       	entityManager.addEntity3(new IcyTree((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum3));
+                       	entityManager.addEntity3(new IcyTree((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum3, this));
                    	}else if(entityName.contains("s")) {
-                  		entityManager.addEntity3(new Stone((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum3));
+                  		entityManager.addEntity3(new Stone((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum3, this));
                    	}else if(entityName.contains("i")) {
-                  		entityManager.addEntity3(new Iron((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum3));
+                  		entityManager.addEntity3(new Iron((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum3, this));
                    	}else if(entityName.contains("f")) {
-                  		entityManager.addEntity3(new Flint((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum3));
+                  		entityManager.addEntity3(new Flint((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum3, this));
                   	}else if(entityName.contains("z")) {
-                  		entityManager.addEntity3(new IcyZombie((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum3, getEntityManager().getPlayer()));
+                  		entityManager.addEntity3(new IcyZombie((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum3, getEntityManager().getPlayer(), this));
                   	}else if(entityName.contains("c")) {
-                 		entityManager.addEntity3(new Coal((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum3));
+                 		entityManager.addEntity3(new Coal((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum3, this));
                    	}else if(entityName.contains("p")) {
-                 		entityManager.addEntity3(new Penguin((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum3));
+                 		entityManager.addEntity3(new Penguin((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, entityNum3, this));
                    	}else if(entityName.contains("b")) {
-                   		entityManager.addEntity3(new Boss3((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, 50, entityNum3));
+                   		entityManager.addEntity3(new Boss3((float) Integer.parseInt(token3[0]) * 64, (float) Integer.parseInt(token3[1]) * 64, 50, entityNum3, this));
                    	}
               	}
                 	

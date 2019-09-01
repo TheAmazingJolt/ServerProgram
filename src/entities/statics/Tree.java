@@ -1,8 +1,5 @@
 package entities.statics;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
 import items.Item;
 import worlds.World;
 

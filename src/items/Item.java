@@ -1,60 +1,55 @@
 package items;
 
-import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import main.Handler;
 import tiles.Tile;
-import gfx.Assets;
+import worlds.World;
 
 public class Item {
 	
 	public static ArrayList<Item> items = new ArrayList<Item>();
-	public static Item woodItem = new Item(Assets.wood, "Wood", 0, false, false, false, false, 1);
-    public static Item rockItem = new Item(Assets.rock, "Rock", 1, false, false, false, false, 1);
-    public static Item axeItem = new Item(Assets.axe, "Axe", 2, true, false, false, false, 2);
-    public static Item flintItem = new Item(Assets.flintRock, "Flint", 3, false, false, false, false, 1);
-    public static Item fireItem = new Item(Assets.fire, "Fire", 4, false, false, false, false, 1);
-    public static Item ironOreItem = new Item(Assets.ironOre, "Iron Ore", 5, false, false, false, false, 1);
-    public static Item ironBarItem = new Item(Assets.ironBar, "Iron Bar", 6, false, false, false, false, 1);
-    public static Item cutWoodItem = new Item(Assets.cutWood, "Cut Wood", 7, false, false, false, false, 1);
-    public static Item ironAxeItem = new Item(Assets.ironAxe, "Iron Axe", 8, true, false, false, false, 3);
-    public static Item woodenHandleItem = new Item(Assets.woodenHandle, "Wooden Handle", 9, false, false, false, false, 1);
-    public static Item charcoalItem = new Item(Assets.charcoal, "Charcoal", 11, true, false, false, false, 1);
-    public static Item rottenFleshItem = new Item(Assets.rottenFlesh, "Rotten Flesh", 12, false, false, false, false, 1);
-    public static Item crushedIronItem = new Item(Assets.crushedIron, "Crushed Iron", 13, false, false, false, false, 1);
-    public static Item healingPowderItem = new Item(Assets.healingPowder, "Healing Powder", 14, false, false, false, false, 1);
-    public static Item healingPotionItem = new Item(Assets.healingPotion, "Healing Potion", 15, false, true, false, false, 1);
-    public static Item bottleItem = new Item(Assets.bottle, "Bottle", 16, false, false, false, false, 1);
-    public static Item healthBoostItem = new Item(Assets.healthBoostPotion, "Health Boost Potion", 18, false, true, false, false, 1);
-    public static Item ashyWoodItem = new Item(Assets.ashyWood, "Ashy Wood", 19, false, false, false, false, 1);
-    public static Item coalItem = new Item(Assets.coal, "Coal", 20, false, false, false, false, 1);
-    public static Item coalDustItem = new Item(Assets.coalDust, "Coal Dust", 21, false, false, false, false, 1);
-    public static Item steelBarItem = new Item(Assets.steelBar, "Steel Bar", 22, false, false, false, false, 1);
-    public static Item steelAxeItem = new Item(Assets.steelAxe, "Steel Axe", 23, true, false, false, false, 4);
-    public static Item steelHealthBoostItem = new Item(Assets.steelHealthBoostPotion, "Steel Health Boost Potion", 24, false, true, false, false, 1);
-    public static Item pistolBulletItem = new Item(Assets.steelBullet, "Pistol Bullet", 25, false, false, false, true, 1);
-    public static Item pistolItem = new Item(Assets.steelGun, "Steel Gun", 26, pistolBulletItem, 1);
-    public static Item inventoryUpgrade = new Item(Assets.inventoryUpgrade, "Inventory Upgrade", 27, Upgrade.inventoryUpgrade);
-    public static Item speedUpgrade = new Item(Assets.speedUpgrade, "Speed Upgrade", 28, Upgrade.speedUpgrade);
-    public static Item woodenStructure = new Item(Assets.woodenStructure, "Wooden Structure", 29, Tile.woodStructure);
-    public static Item cutAshyWood = new Item(Assets.cutAshyWood, "Cut Ashy Wood", 30, false, false, false, false, 1);
-    public static Item steelHammer = new Item(Assets.steelHammer, "Steel Hammer", 31, true, false, false, false, 2);
-    public static Item ashyWoodHandle = new Item(Assets.ashyWoodHandle, "Ashy Wood Handle", 32, false, false, false, false, 1);
-    public static Item steelPlate = new Item(Assets.steelPlate, "Steel Plate", 33, false, false, false, false, 1);
-    public static Item steelRod = new Item(Assets.steelRod, "Steel Rod", 34, false, false, false, false, 1);
-    public static Item gunPowder = new Item(Assets.gunPowder, "Gun Powder", 35, false, false, false, false, 1);
-    public static Item snow = new Item(Assets.snow, "Snow", 36, false, false, false, false, 1);
-    public static Item waterBottle = new Item(Assets.waterBottle, "Water Bottle", 37, false, false, false, false, 1);
-    public static Item smgBullet = new Item(Assets.smgBullet, "Smg Bullet", 38, false, false, false, true, 1);
-    public static Item smg = new Item(Assets.smg, "SMG", 39, smgBullet, 1);
+	public static Item woodItem = new Item("Wood", 0, false, false, false, false, 1);
+    public static Item rockItem = new Item("Rock", 1, false, false, false, false, 1);
+    public static Item axeItem = new Item("Axe", 2, true, false, false, false, 2);
+    public static Item flintItem = new Item("Flint", 3, false, false, false, false, 1);
+    public static Item fireItem = new Item("Fire", 4, false, false, false, false, 1);
+    public static Item ironOreItem = new Item("Iron Ore", 5, false, false, false, false, 1);
+    public static Item ironBarItem = new Item("Iron Bar", 6, false, false, false, false, 1);
+    public static Item cutWoodItem = new Item("Cut Wood", 7, false, false, false, false, 1);
+    public static Item ironAxeItem = new Item("Iron Axe", 8, true, false, false, false, 3);
+    public static Item woodenHandleItem = new Item("Wooden Handle", 9, false, false, false, false, 1);
+    public static Item charcoalItem = new Item("Charcoal", 11, true, false, false, false, 1);
+    public static Item rottenFleshItem = new Item("Rotten Flesh", 12, false, false, false, false, 1);
+    public static Item crushedIronItem = new Item("Crushed Iron", 13, false, false, false, false, 1);
+    public static Item healingPowderItem = new Item("Healing Powder", 14, false, false, false, false, 1);
+    public static Item healingPotionItem = new Item("Healing Potion", 15, false, true, false, false, 1);
+    public static Item bottleItem = new Item("Bottle", 16, false, false, false, false, 1);
+    public static Item healthBoostItem = new Item("Health Boost Potion", 18, false, true, false, false, 1);
+    public static Item ashyWoodItem = new Item("Ashy Wood", 19, false, false, false, false, 1);
+    public static Item coalItem = new Item("Coal", 20, false, false, false, false, 1);
+    public static Item coalDustItem = new Item("Coal Dust", 21, false, false, false, false, 1);
+    public static Item steelBarItem = new Item("Steel Bar", 22, false, false, false, false, 1);
+    public static Item steelAxeItem = new Item("Steel Axe", 23, true, false, false, false, 4);
+    public static Item steelHealthBoostItem = new Item("Steel Health Boost Potion", 24, false, true, false, false, 1);
+    public static Item pistolBulletItem = new Item("Pistol Bullet", 25, false, false, false, true, 1);
+    public static Item pistolItem = new Item("Steel Gun", 26, pistolBulletItem, 1);
+    public static Item inventoryUpgrade = new Item("Inventory Upgrade", 27, Upgrade.inventoryUpgrade);
+    public static Item speedUpgrade = new Item("Speed Upgrade", 28, Upgrade.speedUpgrade);
+    public static Item woodenStructure = new Item("Wooden Structure", 29, Tile.woodStructure);
+    public static Item cutAshyWood = new Item("Cut Ashy Wood", 30, false, false, false, false, 1);
+    public static Item steelHammer = new Item("Steel Hammer", 31, true, false, false, false, 2);
+    public static Item ashyWoodHandle = new Item("Ashy Wood Handle", 32, false, false, false, false, 1);
+    public static Item steelPlate = new Item("Steel Plate", 33, false, false, false, false, 1);
+    public static Item steelRod = new Item("Steel Rod", 34, false, false, false, false, 1);
+    public static Item gunPowder = new Item("Gun Powder", 35, false, false, false, false, 1);
+    public static Item snow = new Item("Snow", 36, false, false, false, false, 1);
+    public static Item waterBottle = new Item("Water Bottle", 37, false, false, false, false, 1);
+    public static Item smgBullet = new Item("Smg Bullet", 38, false, false, false, true, 1);
+    public static Item smg = new Item("SMG", 39, smgBullet, 1);
 
 	public static final int ITEMWIDTH = 32, ITEMHEIGHT = 32;
 	
-	protected Handler handler;
-    protected BufferedImage texture;
     protected String name;
     
     protected boolean tool;
@@ -82,10 +77,12 @@ public class Item {
 	protected int slot = 0;
 	protected int startSlot;
     protected boolean pickedUp = false;
-    public Item(BufferedImage texture, String name, int id, boolean tool, boolean heal, boolean ranged, boolean ammo, int damage)
+    
+    private World world;
+    
+    public Item(String name, int id, boolean tool, boolean heal, boolean ranged, boolean ammo, int damage)
     {
         pickedUp = false;
-        this.texture = texture;
         this.name = name;
         this.id = id;
         this.heal = heal;
@@ -97,10 +94,9 @@ public class Item {
         bounds = new Rectangle(x, y, 32, 32);
     }
     
-    public Item(BufferedImage texture, String name, int id, Item ammoType, int damage)
+    public Item(String name, int id, Item ammoType, int damage)
     {
         pickedUp = false;
-        this.texture = texture;
         this.name = name;
         this.id = id;
         this.heal = false;
@@ -112,10 +108,9 @@ public class Item {
         bounds = new Rectangle(x, y, 32, 32);
     }
     
-    public Item(BufferedImage texture, String name, int id, Upgrade upgradeType)
+    public Item(String name, int id, Upgrade upgradeType)
     {
         pickedUp = false;
-        this.texture = texture;
         this.name = name;
         this.id = id;
         this.heal = false;
@@ -127,10 +122,9 @@ public class Item {
         bounds = new Rectangle(x, y, 32, 32);
     }
     
-    public Item(BufferedImage texture, String name, int id, Tile tileType)
+    public Item(String name, int id, Tile tileType)
     {
         pickedUp = false;
-        this.texture = texture;
         this.name = name;
         this.id = id;
         this.heal = false;
@@ -185,6 +179,10 @@ public class Item {
         items.add(smg);
     }
 
+    public void setWorld(World world) {
+    	this.world = world;
+    }
+    
     public void setTool(boolean tool) {
 		this.tool = tool;
 	}
@@ -202,33 +200,16 @@ public class Item {
     	if(this.upgradeType != null) {
     		this.upgrade = true;
     	}
-        if(handler.getWorld().getEntityManager().getPlayer().getCollisionBounds(0.0F, 0.0F).intersects(bounds))
+        if(world.getEntityManager().getPlayer().getCollisionBounds(0.0F, 0.0F).intersects(bounds))
         {
             pickedUp = true;
-            handler.getWorld().getEntityManager().getPlayer().getInventory().addItem(this, 1);
+            world.getEntityManager().getPlayer().getInventory().addItem(this, 1);
         }
-    }
-
-    public void render(Graphics g)
-    {
-        if(handler == null)
-        {
-            return;
-        } else
-        {
-            render(g, (int)((float)x - handler.getGameCamera().getxOffset()), (int)((float)y - handler.getGameCamera().getyOffset()));
-            return;
-        }
-    }
-
-    public void render(Graphics g, int x, int y)
-    {
-        g.drawImage(texture, x, y, 32, 32, null);
     }
 
     public Item createNew(int count)
     {
-        Item i = new Item(texture, name, id, tool, heal, key, ranged, damage);
+        Item i = new Item(name, id, tool, heal, key, ranged, damage);
         i.setPickedUp(true);
         i.setCount(count);
         return i;
@@ -236,7 +217,7 @@ public class Item {
 
     public Item createNew(int x, int y, boolean tool, boolean heal, boolean ranged)
     {
-        Item i = new Item(texture, name, id, tool, heal, key, ranged, damage);
+        Item i = new Item(name, id, tool, heal, key, ranged, damage);
         i.setPosition(x, y);
         return i;
     }
@@ -266,12 +247,7 @@ public class Item {
     public Tile getTileType() {
 		return tileType;
 	}
-
-	public Handler getHandler()
-    {
-        return handler;
-    }
-
+    
     public boolean isUpgrade() {
 		return upgrade;
 	}
@@ -346,22 +322,7 @@ public class Item {
     {
         return key;
     }
-
-    public void setHandler(Handler handler)
-    {
-        this.handler = handler;
-    }
-
-    public BufferedImage getTexture()
-    {
-        return texture;
-    }
-
-    public void setTexture(BufferedImage texture)
-    {
-        this.texture = texture;
-    }
-
+    
     public String getName()
     {
         return name;

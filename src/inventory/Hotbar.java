@@ -1,16 +1,12 @@
 package inventory;
 
-import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import com.sun.glass.events.KeyEvent;
-
 import entities.projectiles.PistolBullet;
 import entities.projectiles.SmgBullet;
-import gfx.Assets;
 import items.Item;
-import main.Handler;
+import worlds.World;
 
 // Referenced classes of package inventory:
 //            Inventory
@@ -18,65 +14,54 @@ import main.Handler;
 public class Hotbar
 {
 
-	private static Handler handler;
     private static boolean active = true;
     private static boolean hasItem1;
     private static ArrayList<Item> hotbarItems;
     
-    private int invX;
-    private int invY;
-    private int invWidth;
-    private int invHeight;
-    
-    private int slot1x;
-    private int slotY;
-    private int slotWidth;
-    private int slotHeight;
-    
-    private int dividerWidth;
-    
-    private int slot2x;
-    private int slot3x;
-    private int slot4x;
-    private int slot5x;
-    
     private static int selectedItem = 0;
+    
+    private static World world;
 	
-    public Hotbar(Handler handle)
+    public Hotbar(World worl)
     {
-        invX = 332;
-        invY = 645;
-        invWidth = 299;
-        invHeight = 56;
-        slot1x = 339;
-        slotY = 650;
-        slotWidth = 45;
-        slotHeight = 45;
-        dividerWidth = 15;
-        slot2x = slot1x + (slotWidth + dividerWidth);
-        slot3x = slot2x + (slotWidth + dividerWidth);
-        slot4x = slot3x + (slotWidth + dividerWidth);
-        slot5x = slot4x + (slotWidth + dividerWidth);
-        handler = handle;
+        world = worl;
         hotbarItems = new ArrayList<Item>();
     }
     
     public void tick()
     {
-        if(handler.getKeyManager().keyJustPressed(49))
-            selectedItem = 0;
-        else
-        if(handler.getKeyManager().keyJustPressed(50))
-            selectedItem = 1;
-        else
-        if(handler.getKeyManager().keyJustPressed(51))
-            selectedItem = 2;
-        else
-        if(handler.getKeyManager().keyJustPressed(52))
-            selectedItem = 3;
-        else
-        if(handler.getKeyManager().keyJustPressed(53))
-            selectedItem = 4;
+    	if(world.id == 1) {
+    		if(world.storage.getCurrentKey1().contains("1"))
+                selectedItem = 0;
+            else
+            if(world.storage.getCurrentKey1().contains("2"))
+                selectedItem = 1;
+            else
+            if(world.storage.getCurrentKey1().contains("3"))
+                selectedItem = 2;
+            else
+            if(world.storage.getCurrentKey1().contains("4"))
+                selectedItem = 3;
+            else
+            if(world.storage.getCurrentKey1().contains("5"))
+                selectedItem = 4;
+    	}else if(world.id == 2) {
+    		if(world.storage.getCurrentKey2().contains("1"))
+                selectedItem = 0;
+            else
+            if(world.storage.getCurrentKey2().contains("2"))
+                selectedItem = 1;
+            else
+            if(world.storage.getCurrentKey2().contains("3"))
+                selectedItem = 2;
+            else
+            if(world.storage.getCurrentKey2().contains("4"))
+                selectedItem = 3;
+            else
+            if(world.storage.getCurrentKey2().contains("5"))
+                selectedItem = 4;
+    	}
+        
         if(selectedItem < 0)
             selectedItem = 0;
         else
@@ -96,38 +81,37 @@ public class Hotbar
         else
         if(hotbarItems.size() == 5 && selectedItem > 4)
             selectedItem = 4;
-        if(handler.getKeyManager().keyJustPressed(16) && hotbarItems.size() > 0 && !((Item)hotbarItems.get(selectedItem)).isTool() 
-        		&& !handler.getWorld().getEntityManager().getPlayer().getInventory().isActive()) {
-            useItem((Item)hotbarItems.get(selectedItem));
-            return;
-        }if(handler.getKeyManager().keyJustPressed(KeyEvent.VK_SHIFT) && hotbarItems.size() > 0 && (hotbarItems.get(selectedItem).getName().contains("Upgrade"))) { 
-            useUpgrade((Item)hotbarItems.get(selectedItem));
-            return;
-        }if(hotbarItems.size() > 0 && hotbarItems.get(selectedItem).getId() == 16)
-        	if(handler.getWorld().getTile(handler.getWorld().getEntityManager().getPlayer().getTileX(),
-        			handler.getWorld().getEntityManager().getPlayer().getTileY()).getId() == 4) {
-        		handler.getWorld().getEntityManager().getPlayer().getInventory().removeItem(hotbarItems.get(selectedItem), 1);
-        		handler.getWorld().getEntityManager().getPlayer().getInventory().addItem(Item.waterBottle, 1);
+        if(world.id == 1) {
+        	if(world.storage.getCurrentKey1().contains("shift") && hotbarItems.size() > 0 && !((Item)hotbarItems.get(selectedItem)).isTool() 
+            		&& !world.getEntityManager().getPlayer().getInventory().isActive()) {
+                useItem((Item)hotbarItems.get(selectedItem));
+                return;
+            }else if(world.storage.getCurrentKey1().contains("shift") && hotbarItems.size() > 0 && (hotbarItems.get(selectedItem).getName().contains("Upgrade"))) { 
+                useUpgrade((Item)hotbarItems.get(selectedItem));
+                return;
+            }
+        }else if(world.id == 2) {
+        	if(world.storage.getCurrentKey2().contains("shift") && hotbarItems.size() > 0 && !((Item)hotbarItems.get(selectedItem)).isTool() 
+            		&& !world.getEntityManager().getPlayer().getInventory().isActive()) {
+                useItem((Item)hotbarItems.get(selectedItem));
+                return;
+            }else if(world.storage.getCurrentKey2().contains("shift") && hotbarItems.size() > 0 && (hotbarItems.get(selectedItem).getName().contains("Upgrade"))) { 
+                useUpgrade((Item)hotbarItems.get(selectedItem));
+                return;
+            }
+        }
+        if(hotbarItems.size() > 0 && hotbarItems.get(selectedItem).getId() == 16)
+        	if(world.getTile(world.getEntityManager().getPlayer().getTileX(),
+        			world.getEntityManager().getPlayer().getTileY()).getId() == 4) {
+        		world.getEntityManager().getPlayer().getInventory().removeItem(hotbarItems.get(selectedItem), 1);
+        		world.getEntityManager().getPlayer().getInventory().addItem(Item.waterBottle, 1);
         		return;
         	}
-    }
-
-    public void render(Graphics g)
-    {
-        if(!active)
-            return;
-        g.drawImage(Assets.hotbar, invX, invY, invWidth, invHeight, null);
-        int len = hotbarItems.size();
-        if(len == 0)
-            return;
         if(hotbarItems.size() <= 0)
             return;
         if(hotbarItems.size() == 1)
         {
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
-                g.drawImage(((Item)hotbarItems.get(0)).getTexture(), slot1x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(0));
                 return;
@@ -135,18 +119,12 @@ public class Hotbar
         } else
         if(hotbarItems.size() == 2)
         {
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
-                g.drawImage(((Item)hotbarItems.get(0)).getTexture(), slot1x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(0));
                 return;
             }
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(1).getId()))
-                g.drawImage(((Item)hotbarItems.get(1)).getTexture(), slot2x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(1).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(1).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(1));
                 return;
@@ -154,26 +132,17 @@ public class Hotbar
         } else
         if(hotbarItems.size() == 3)
         {
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
-                g.drawImage(((Item)hotbarItems.get(0)).getTexture(), slot1x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(0));
                 return;
             }
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(1).getId()))
-                g.drawImage(((Item)hotbarItems.get(1)).getTexture(), slot2x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(1).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(1).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(1));
                 return;
             }
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(2).getId()))
-                g.drawImage(((Item)hotbarItems.get(2)).getTexture(), slot3x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(2).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(2).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(2));
                 return;
@@ -181,34 +150,22 @@ public class Hotbar
         } else
         if(hotbarItems.size() == 4)
         {
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
-                g.drawImage(((Item)hotbarItems.get(0)).getTexture(), slot1x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(0));
                 return;
             }
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(1).getId()))
-                g.drawImage(((Item)hotbarItems.get(1)).getTexture(), slot2x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(1).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(1).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(1));
                 return;
             }
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(2).getId()))
-                g.drawImage(((Item)hotbarItems.get(2)).getTexture(), slot3x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(2).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(2).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(2));
                 return;
             }
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(3).getId()))
-                g.drawImage(((Item)hotbarItems.get(3)).getTexture(), slot4x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(3).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(3).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(3));
                 return;
@@ -216,62 +173,32 @@ public class Hotbar
         } else
         if(hotbarItems.size() == 5)
         {
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
-                g.drawImage(((Item)hotbarItems.get(0)).getTexture(), slot1x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(0).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(0));
                 return;
             }
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(1).getId()))
-                g.drawImage(((Item)hotbarItems.get(1)).getTexture(), slot2x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(1).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(1).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(1));
                 return;
             }
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(2).getId()))
-                g.drawImage(((Item)hotbarItems.get(2)).getTexture(), slot3x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(2).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(2).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(2));
                 return;
             }
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(3).getId()))
-                g.drawImage(((Item)hotbarItems.get(3)).getTexture(), slot4x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(3).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(3).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(3));
                 return;
             }
-            if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(4).getId()))
-                g.drawImage(((Item)hotbarItems.get(4)).getTexture(), slot5x, slotY, slotWidth, slotHeight, null);
-            else
-            if(!handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(4).getId()))
+            if(!world.getEntityManager().getPlayer().getInventory().checkIfContains(hotbarItems.get(4).getId()))
             {
                 hotbarItems.remove(hotbarItems.get(4));
                 return;
             }
         }
-
-        if(selectedItem == 0)
-            g.drawImage(Assets.outline, slot1x, slotY, slotWidth, slotHeight, null);
-        else
-        if(selectedItem == 1)
-            g.drawImage(Assets.outline, slot2x, slotY, slotWidth, slotHeight, null);
-        else
-        if(selectedItem == 2)
-            g.drawImage(Assets.outline, slot3x, slotY, slotWidth, slotHeight, null);
-        else
-        if(selectedItem == 3)
-            g.drawImage(Assets.outline, slot4x, slotY, slotWidth, slotHeight, null);
-        else
-        if(selectedItem == 4)
-            g.drawImage(Assets.outline, slot5x, slotY, slotWidth, slotHeight, null);
     }
 
     public static void useItem(Item item)
@@ -279,12 +206,12 @@ public class Hotbar
         if(checkIfContains(item.getId()) && item.isHeal())
         {
             if(item.getName() == "Health Boost Potion")
-                handler.getWorld().getEntityManager().getPlayer().setMaxHealth(handler.getWorld().getEntityManager().getPlayer().getMaxHealth() + 5);
+            	world.getEntityManager().getPlayer().setMaxHealth(world.getEntityManager().getPlayer().getMaxHealth() + 5);
             if(item.getName() == "Steel Health Boost Potion")
-                handler.getWorld().getEntityManager().getPlayer().setMaxHealth(handler.getWorld().getEntityManager().getPlayer().getMaxHealth() + 10);
-            handler.getWorld().getEntityManager().getPlayer().setHealth(handler.getWorld().getEntityManager().getPlayer().getMaxHealth());
-            handler.getWorld().getEntityManager().getPlayer().getInventory().removeItem(item, 1);
-            handler.getWorld().getEntityManager().getPlayer().getInventory().addItem(Item.bottleItem, 1);
+            	world.getEntityManager().getPlayer().setMaxHealth(world.getEntityManager().getPlayer().getMaxHealth() + 10);
+            world.getEntityManager().getPlayer().setHealth(world.getEntityManager().getPlayer().getMaxHealth());
+            world.getEntityManager().getPlayer().getInventory().removeItem(item, 1);
+            world.getEntityManager().getPlayer().getInventory().addItem(Item.bottleItem, 1);
             if(item.getCount() <= 0)
                 selectedItem--;
         }
@@ -295,27 +222,27 @@ public class Hotbar
     	if(checkIfContains(item.getId()) && item.isRanged())
         {
         	if(item.getAmmoType().getName() == "Pistol Bullet") {
-        		if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(item.getAmmoType().getId())) {
-                	PistolBullet bullet = new PistolBullet(handler, -10, -10, handler.getWorld().getEntityManager().getPlayer());
-                   	handler.getWorld().getEntityManager().add(bullet);
-                   	handler.getWorld().getEntityManager().getPlayer().setAttackCooldown2(bullet.getAttackCooldown());
-                   	bullet.fire(handler.getWorld().getEntityManager().getPlayer().getDirectionMoving());
+        		if(world.getEntityManager().getPlayer().getInventory().checkIfContains(item.getAmmoType().getId())) {
+                	PistolBullet bullet = new PistolBullet(-10, -10, world.getEntityManager().getPlayer(), world);
+                	world.getEntityManager().add(bullet);
+                	world.getEntityManager().getPlayer().setAttackCooldown2(bullet.getAttackCooldown());
+                   	bullet.fire(world.getEntityManager().getPlayer().getDirectionMoving());
         		}else {
         			return;
         		}
         	}else if(item.getAmmoType().getName() == "Smg Bullet") {
-        		if(handler.getWorld().getEntityManager().getPlayer().getInventory().checkIfContains(item.getAmmoType().getId())) {
-                	SmgBullet bullet = new SmgBullet(handler, -10, -10, handler.getWorld().getEntityManager().getPlayer());
-                   	handler.getWorld().getEntityManager().add(bullet);
-                   	handler.getWorld().getEntityManager().getPlayer().setAttackCooldown2(bullet.getAttackCooldown());
-                   	bullet.fire(handler.getWorld().getEntityManager().getPlayer().getDirectionMoving());
+        		if(world.getEntityManager().getPlayer().getInventory().checkIfContains(item.getAmmoType().getId())) {
+                	SmgBullet bullet = new SmgBullet(-10, -10, world.getEntityManager().getPlayer(), world);
+                	world.getEntityManager().add(bullet);
+                	world.getEntityManager().getPlayer().setAttackCooldown2(bullet.getAttackCooldown());
+                   	bullet.fire(world.getEntityManager().getPlayer().getDirectionMoving());
         		}else {
         			return;
         		}
         	}else {
         		return;
         	}
-            handler.getWorld().getEntityManager().getPlayer().getInventory().removeItem(item.getAmmoType(), 1);
+        	world.getEntityManager().getPlayer().getInventory().removeItem(item.getAmmoType(), 1);
             if(item.getCount() <= 0)
                 selectedItem--;
         }
@@ -325,8 +252,8 @@ public class Hotbar
     {
     	if(checkIfContains(item.getId()) && item.isUpgrade())
         {
-        	handler.getWorld().getEntityManager().getPlayer().getUpgrades().add(item.getUpgradeType());
-            handler.getWorld().getEntityManager().getPlayer().getInventory().removeItem(item, 1);
+    		world.getEntityManager().getPlayer().getUpgrades().add(item.getUpgradeType());
+    		world.getEntityManager().getPlayer().getInventory().removeItem(item, 1);
             if(item.getCount() <= 0)
                 selectedItem--;
         }
@@ -380,16 +307,6 @@ public class Hotbar
         }
 
         return hasItem1;
-    }
-
-    public Handler getHandler()
-    {
-        return handler;
-    }
-
-    public void setHandler(Handler handle)
-    {
-        handler = handle;
     }
 
     public static boolean isActive()

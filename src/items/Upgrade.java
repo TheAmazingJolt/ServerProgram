@@ -1,13 +1,9 @@
 package items;
 
-import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import effects.Effect;
-import main.Handler;
-import gfx.Assets;
 
 public class Upgrade {
 	
@@ -15,13 +11,11 @@ public class Upgrade {
 	//extended crafting will be used in the hotbar to upgrade the player before they can access the upgrade panel in LargeInventory
 	
 	public static ArrayList<Upgrade> upgrades = new ArrayList<Upgrade>();
-	public static Upgrade inventoryUpgrade = new Upgrade(Assets.inventoryUpgrade, "Inventory Upgrade", 0, Effect.largeCrafting);
-	public static Upgrade speedUpgrade = new Upgrade(Assets.speedUpgrade, "Speed Upgrade", 1, Effect.speedBoost);
+	public static Upgrade inventoryUpgrade = new Upgrade("Inventory Upgrade", 0, Effect.largeCrafting);
+	public static Upgrade speedUpgrade = new Upgrade("Speed Upgrade", 1, Effect.speedBoost);
 	
 	public static final int ITEMWIDTH = 32, ITEMHEIGHT = 32;
 	
-	protected Handler handler;
-    protected BufferedImage texture;
     protected String name;
     
     protected final int id;
@@ -39,10 +33,9 @@ public class Upgrade {
     protected boolean pickedUp = false;
     protected Effect effectType;
     
-    public Upgrade(BufferedImage texture, String name, int id, Effect effectType)
+    public Upgrade(String name, int id, Effect effectType)
     {
         pickedUp = false;
-        this.texture = texture;
         this.name = name;
         this.id = id;
         this.effectType = effectType;
@@ -61,24 +54,7 @@ public class Upgrade {
     {
         
     }
-
-    public void render(Graphics g)
-    {
-        if(handler == null)
-        {
-            return;
-        } else
-        {
-            render(g, (int)((float)x - handler.getGameCamera().getxOffset()), (int)((float)y - handler.getGameCamera().getyOffset()));
-            return;
-        }
-    }
-
-    public void render(Graphics g, int x, int y)
-    {
-        g.drawImage(texture, x, y, 32, 32, null);
-    }
-
+    
     public int getDamage()
     {
         return damage;
@@ -95,11 +71,6 @@ public class Upgrade {
         this.y = y;
         bounds.x = x;
         bounds.y = y;
-    }
-
-    public Handler getHandler()
-    {
-        return handler;
     }
 
     public int getInvId() {
@@ -146,21 +117,6 @@ public class Upgrade {
 		this.y2 = y2;
 	}
 	
-    public void setHandler(Handler handler)
-    {
-        this.handler = handler;
-    }
-
-    public BufferedImage getTexture()
-    {
-        return texture;
-    }
-
-    public void setTexture(BufferedImage texture)
-    {
-        this.texture = texture;
-    }
-
     public String getName()
     {
         return name;

@@ -1,6 +1,5 @@
 package entities;
 
-import java.awt.Graphics;
 import java.awt.Rectangle;
 
 import worlds.World;

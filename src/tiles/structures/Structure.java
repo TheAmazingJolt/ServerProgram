@@ -1,7 +1,5 @@
 package tiles.structures;
 
-import java.awt.image.BufferedImage;
-
 import tiles.Tile;
 
 public class Structure extends Tile{
@@ -11,8 +9,8 @@ public class Structure extends Tile{
 	public int health = 50;
 	private boolean locationSet = false;
 	
-	public Structure(BufferedImage texture, int id, int locationX, int locationY) {
-		super(texture, id);
+	public Structure(int id, int locationX, int locationY) {
+		super(id);
 	}
 	
 	public void hurt(int dmg) {

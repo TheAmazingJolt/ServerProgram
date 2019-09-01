@@ -1,11 +1,9 @@
 package tiles;
 
-import gfx.Assets;
-
 public class HellRockTile extends Tile{
 
 	public HellRockTile(int id) {
-		super(Assets.hellStoneWall, id);
+		super(id);
 	}
 	public boolean isSolid() {
 		return true;
